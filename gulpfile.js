@@ -19,22 +19,30 @@ var paths = {
   js: ['src/js/**/*.js'],
 };
 
+// Watch all the files and run specific tasks if one changes
+gulp.task('watch', function() {
+  gulp.watch(paths.public, ['public']);
+  gulp.watch(paths.hbs, ['hbs']);
+  gulp.watch(paths.scss, ['scss']);
+  gulp.watch(paths.js, ['js']);
+});
+
 // Delete the dist folder
-gulp.task('clean', function() {
+gulp.task('delete-dist', function() {
   return del(['dist']);
 });
 
 // Copy over the files in the public folder "as they are" to the dist folder
-gulp.task('public', function() {
-  return gulp.src('src/public')
-    .pipe(gulp.dest('dist/public'));
+gulp.task('copy-public', ['delete-dist'], function() {
+  return gulp.src('src/public/**/*')
+    .pipe(gulp.dest('dist/'));
 });
 
 // Compile all HTML to dist folder
-gulp.task('html', ['clean'], function() {});
+gulp.task('compile-html', ['delete-dist'], function() {});
 
 // Compile all CSS to dist folder
-gulp.task('css', ['clean'], function() {
+gulp.task('compile-css', ['delete-dist'], function() {
   return gulp.src('src/styles/imports.scss')
     .pipe(sass())
     .pipe(autoprefixer({
@@ -46,7 +54,7 @@ gulp.task('css', ['clean'], function() {
 });
 
 // Minify the CSS file
-gulp.task('minify-css', ['css'], function() {
+gulp.task('minify-css', ['compile-css'], function() {
   return gulp.src('dist/assets/css/styles.css')
     .pipe(cleanCSS())
     .pipe(rename('styles.min.css'))
@@ -54,15 +62,7 @@ gulp.task('minify-css', ['css'], function() {
 });
 
 // Compile all JS to dist folder
-gulp.task('js', ['clean'], function() {});
-
-// Watch all the files and run specific tasks if one changes
-gulp.task('watch', function() {
-  gulp.watch(paths.public, ['public']);
-  gulp.watch(paths.hbs, ['hbs']);
-  gulp.watch(paths.scss, ['scss']);
-  gulp.watch(paths.js, ['js']);
-});
+gulp.task('compile-js', ['delete-dist'], function() {});
 
 // Define all available gulp tasks
-gulp.task('build', ['clean', 'public', 'html', 'css', 'minify-css', 'js']);
+gulp.task('build', ['delete-dist', 'copy-public', 'compile-html', 'compile-css', 'minify-css', 'compile-js']);
