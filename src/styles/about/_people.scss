@@ -1,0 +1,14 @@
+#about-people {
+  #hero {
+    display: none;
+  }
+  #about-nav {
+    a[href="/about/people"] {
+      color: $reddust-rust;
+    }
+  }
+  #filter {
+    display: none;
+    background: $reddust-stone;
+  }
+}
